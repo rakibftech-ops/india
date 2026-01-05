@@ -3,13 +3,13 @@
 <script>
   // ---- Date/Time Display ----
   const dateSuffix = (date) => {
-    const suffixes = ["th", "st", "nd", "rd"];
-    const v = date % 100;
-    return date + (suffixes[(v - 20) % 10] || suffixes[v] || suffixes[0]);
+      const suffixes = ["th", "st", "nd", "rd"];
+      const v = date % 100;
+      return date + (suffixes[(v - 20) % 10] || suffixes[v] || suffixes[0]);
   };
 
   const updateSelectedSlot = (slot) => {
-    if (!Array.isArray(slot) && slot.length <= 1) return;
+    if(!Array.isArray(slot) && slot.length <= 1) return;
     // 🗓️ Date line
     const dateEl = document.querySelector(".js-date-display .elementor-heading-title");
     // ⏳ Time line
@@ -18,18 +18,18 @@
     let startDate = new Date(slot[0].start_time);
     let endDate = new Date(slot[slot.length - 1].start_time);
     let monthFull = startDate.toLocaleString("en-US", { month: "long" });
-
+    
     if (dateEl) dateEl.innerHTML = `🗓️ <span>${monthFull}</span> <span>${dateSuffix(startDate.getDate())}</span> to <span>${dateSuffix(endDate.getDate())}</span>`;
 
-    let slotTime = startDate.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true });
+    let slotTime = startDate.toLocaleTimeString('en-US', {hour: 'numeric', minute: '2-digit', hour12: true });
 
     if (timeEl) {
-      timeEl.innerHTML = `⏳ <span>${slotTime}</span> ${v_country === "India" ? '' : 'PT'} onward`;
+        timeEl.innerHTML = `⏳ <span>${slotTime}</span> ${v_country === "India" ? '' : 'PT'} onward`;
     }
   };
 
-  document.addEventListener("webNearLoaded", function () {
-    if (isUpcommingError && isUpcommingError?.length && isUpcommingError.length > 0) webinarSlots = isUpcommingError;
+  document.addEventListener("webNearLoaded", function(){
+    if(isUpcommingError && isUpcommingError?.length && isUpcommingError.length > 0) webinarSlots = isUpcommingError;
     window.slotLoded = true;
     updateSelectedSlot(webinarSlots);
   });
@@ -91,7 +91,7 @@
       userAgent: "",
       li_fat_id: "",
       user_timezone: "",
-      l_page_url: window?.LANDING_PAGE_URL ? LANDING_PAGE_URL : "",
+      l_page_url: window?.LANDING_PAGE_URL ? LANDING_PAGE_URL :  "",
       cta_page_url: "",
       webinar_type: "",
       eventname: "",
@@ -110,10 +110,10 @@
       inviteStartTime: "",
       inviteEndTime: "",
     };
-
+    
     //check regex
     let name_regex2 = new RegExp("^[a-zA-Z ]+$");
-    let email_regex2 = EMAIL_REGEX;
+    let email_regex2 =  EMAIL_REGEX;
     let phone_regex2 = /^(\+\d{1,2}\s?)?1?\-?\.?\s?\(?\d{3}\)?[\s.-]?\d{3}[\s.-]?\d{4}$/;
 
     // getlocation json
@@ -169,7 +169,7 @@
       webNearInfo2.fbcId = fbc || null;
       webNearInfo2.fbpId = fbp || null;
       webNearInfo2.userAgent = userAgent,
-        webNearInfo2.li_fat_id = decodeURIComponent(params['li_fat_id'] || "");
+      webNearInfo2.li_fat_id = decodeURIComponent(params['li_fat_id'] || "");
 
       webNearInfo2.user_id = visitor_id;
       webNearInfo2.user_timezone = v_timezone;
@@ -234,24 +234,25 @@
         "page_url": webNearInfo2.page_url,
         "site_url": webNearInfo2.site_url,
         "v_country": webNearInfo2.v_country,
-        "lead_magnet": "MASTERCLASS_LIVE",
+        "lead_magnet" : "MASTERCLASS_LIVE",
         "salesforce_uuid": webNearInfo2.salesforce_uuid,
         "phone_number_full": webNearInfo2.fPhoneNumber,
         "is_exit_intent_popup": webNearInfo2.is_exit_intent_popup,
         "irclickid": webNearInfo2.irclickid,
-        //         ...userIpAndBrowserInfo
+				...(window.updateZapPayload || {}),
+//         ...userIpAndBrowserInfo
       };
 
-      if (step === 2 && webinarSlots) {
+      if(step === 2 && webinarSlots){
         formData.webinarSlots = webinarSlots.slice(0, 3).map(slot => ({
           start_time: slot.start_time,
           end_time: slot.end_time,
           invitee_start_time: slot.invitee_start_time,
           invitee_end_time: slot.invitee_end_time
         }));
-      } else {
+      }else{
         formData = {
-          ...formData,
+          ...formData, 
           "Event Start Time": webNearInfo2.eventStartTime,
           "Event End Time": webNearInfo2.eventEndTime,
           "Invitee Start Time": webNearInfo2.inviteStartTime,
@@ -259,7 +260,7 @@
         };
         console.log('first Data', formData);
       }
-
+      
       // Validate payload before sending
       if (!formData || Object.keys(formData).length === 0 || JSON.stringify(formData) === "{}") {
         throw new Error("Zapier webhook payload is empty");
@@ -324,8 +325,8 @@
         errMsgElement.innerHTML = `<b>ⓘ</b> Full Name cannot exceed 31 characters.`;
         track("info-e", "validation-name-length");
         return;
-      }
-      else if (!email_regex2.test(wEmail) || wEmail.length == 0) {
+      } 
+				else if (!email_regex2.test(wEmail) || wEmail.length == 0) {
         getEmErrMsg2.setAttribute('err_status', true);
         track("info-e", "validation-email");
         return;
@@ -368,9 +369,9 @@
           webNearInfo2.fPhoneNumber = webNearPhoneNumberWri2.getNumber(intlTelInputUtils.numberFormat.E164);
         }
         let zapUrl = "https://hooks.zapier.com/hooks/catch/11068981/34xpbjl/";
-
-        getThePopupFrom2.querySelector('.v2_int_fild').setAttribute('cn_status', 'india');
-
+        
+         getThePopupFrom2.querySelector('.v2_int_fild').setAttribute('cn_status', 'india');
+        
         pushToEndPoint2(zapUrl)
           .then(() => {
             track("info");
@@ -394,7 +395,7 @@
       function track(step, message) {
         typeof saveFormEventsActivity === 'function' ? saveFormEventsActivity(step, null, null, message) : console.error("saveFormEventsActivity is not a function");
       }
-
+      
       let utmm = visitor_id + ":" + webNearInfo2.v_country;
       let sf_uuid = v_timezone + ":in.ik" + cta_lp + ":in.ik" + getCookie("ik-landingpage");
       webNearInfo2.salesforce_uuid = sf_uuid;
@@ -505,6 +506,7 @@
           'Is Student': v2IsStudent,
           salesforce_uuid: webNearInfo2.salesforce_uuid,
           page_url: webNearInfo2?.page_url || "",
+					...(window.updateZapPayload || {}),
         };
 
         try {
